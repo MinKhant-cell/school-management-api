@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum EmployeeRole {
+  TEACHER
+  ADMIN
+  LIBRARIAN
+  JANITOR
+}
+
+enum EmployeeStatus {
+  AVAILABLE
+  UNAVAILABLE
+  RESIGNED
+}
+
+enum CourseStatus {
+  UPCOMING
+  ONGOING
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  password       String    
+  name           String?
+  role           String    @default("user")
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  refreshToken   String?
+}
+
+
+model Student {
+  id             Int       @id @default(autoincrement())
+  name           String    
+  email          String    @unique
+  date_of_birth  DateTime?
+  gender         Gender
+  status         String    @default(" ")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Employee {
+  id             Int      @id @default(autoincrement())
+  name           String    
+  email          String    @unique
+  phone          String    @unique
+  date_of_birth  DateTime?
+  gender         Gender
+  role           EmployeeRole
+  status         EmployeeStatus    @default(AVAILABLE)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  course Course?
+}
+
+model Course {
+  id             Int      @id @default(autoincrement())
+  name        String  @unique
+  start_date  DateTime?
+  end_date    DateTime?
+  duration    String?
+  fees        BigInt?
+  currency    String?
+  description String?
+  employee    Employee?    @relation(fields: [employee_id], references: [id])
+  employee_id  Int?   @unique
+  photo_url   String?
+  status      CourseStatus    @default(UPCOMING)
+  is_publish  Boolean  @default(false)
+  created_by  BigInt?
+  created_at  DateTime @default(now())
+  updated_at  DateTime?
+}
+
+
+
+

@@ -1,0 +1,33 @@
+# Node modules & dependencies
+node_modules
+npm-debug.log
+yarn.lock
+package-lock.json
+
+# Build output
+build
+.caches
+
+# Local env files
+
+
+# Logs
+*.log
+logs
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Git
+.git
+.gitignore
+.gitlab-ci.yml
