@@ -1,17 +1,36 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class StudentsService {
+  constructor(private prismaService: PrismaService) {}
 
-  constructor(private prismaService: PrismaService){
-
-  }
-
-  create(createStudentDto: CreateStudentDto) {
-    return 'This action adds a new student';
+  async create(createStudentDto: CreateStudentDto) {
+    try {
+      const student = await this.prismaService.student.create({
+        data: createStudentDto,
+      });
+      return {
+        data: student,
+        message: `Created Student ${student.name} Success!`,
+        status: HttpStatus.CREATED,
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        data: null,
+        message: `Created Student Fail!`,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: error,
+      };
+    }
   }
 
   async findAll(params: {
@@ -22,33 +41,36 @@ export class StudentsService {
     filter?: {
       email?: string;
       date_of_birth?: string;
-      gender: 'MALE' | 'FEMALE'
-    }
+      gender: 'MALE' | 'FEMALE';
+    };
   }) {
-
-
-    const {page=1, limit=10, sortBy='id', sortOrder='desc',filter} = params || {};
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'id',
+      sortOrder = 'desc',
+      filter,
+    } = params || {};
     const where: any = {};
 
     const f: {
-    email?: string;
-    date_of_birth?: string;
-    gender?: 'MALE' | 'FEMALE';
-  } = filter || {};
+      email?: string;
+      date_of_birth?: string;
+      gender?: 'MALE' | 'FEMALE';
+    } = filter || {};
 
-    if(f.email){
-      where.email = { contains: f.email, mode: 'insensitive'}
+    if (f.email) {
+      where.email = { contains: f.email, mode: 'insensitive' };
     }
-    if(f.gender) {
-      where.gender = f.gender
+    if (f.gender) {
+      where.gender = f.gender;
     }
-
 
     const skip = (page - 1) * limit;
 
-    const orderBy = {[sortBy]: sortOrder};
+    const orderBy = { [sortBy]: sortOrder };
 
-    const[data,total] = await Promise.all([
+    const [data, total] = await Promise.all([
       this.prismaService.student.findMany({
         where,
         skip,
@@ -59,45 +81,64 @@ export class StudentsService {
     ]);
 
     return {
-    data,
-    meta: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    },
-  };
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: number) {
-    return await this.prismaService.student.findUnique({where: {id: id}})
+    return await this.prismaService.student.findUnique({ where: { id: id } });
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async update(id: number, updateStudentDto: UpdateStudentDto) {
+    try {
+      const student = await this.prismaService.student.update({
+        where: { id },
+        data: updateStudentDto,
+      });
+      return {
+        data: student,
+        message: `Updated Student ${student.name} Success!`,
+        status: HttpStatus.OK,
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        data: null,
+        message: `Updated Student Fail!`,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: error,
+      };
+    }
   }
 
   async remove(id: number) {
-    const student = await this.prismaService.student.findUnique({where: {id: id}});
+    const student = await this.prismaService.student.findUnique({
+      where: { id: id },
+    });
 
-    if(!student){
+    if (!student) {
       throw new NotFoundException();
     }
-    try{
-    await this.prismaService.student.delete({where: {id: id}})
-    return {
-      data: null,
-      message: `Deleted Student Name: ${student.name} success!`,
-      status: HttpStatus.NO_CONTENT
-    };
-    }catch(error){
+    try {
+      await this.prismaService.student.delete({ where: { id: id } });
+      return {
+        data: null,
+        message: `Deleted Student Name: ${student.name} success!`,
+        status: HttpStatus.NO_CONTENT,
+      };
+    } catch (error) {
       return {
         data: null,
         message: `Deleted Student Name: ${student.name} fail!`,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        error: error
+        error: error,
       };
     }
-    
   }
 }
