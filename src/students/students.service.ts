@@ -38,32 +38,26 @@ export class StudentsService {
     limit?: number;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
-    filter?: {
-      email?: string;
-      date_of_birth?: string;
-      gender: 'MALE' | 'FEMALE';
-    };
+    email?: string;
+    date_of_birth?: string;
+    gender: 'MALE' | 'FEMALE';
   }) {
     const {
       page = 1,
       limit = 10,
       sortBy = 'id',
       sortOrder = 'desc',
-      filter,
+      email,
+      date_of_birth,
+      gender
     } = params || {};
-    const where: any = {};
+    const where: any = {};  
 
-    const f: {
-      email?: string;
-      date_of_birth?: string;
-      gender?: 'MALE' | 'FEMALE';
-    } = filter || {};
-
-    if (f.email) {
-      where.email = { contains: f.email, mode: 'insensitive' };
+    if (email) {
+      where.email = { contains: email, mode: 'insensitive' };
     }
-    if (f.gender) {
-      where.gender = f.gender;
+    if (gender) {
+      where.gender = gender;
     }
 
     const skip = (page - 1) * limit;

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes, Query } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -14,8 +14,10 @@ export class StudentsController {
   }
 
   @Get()
-  findAll(@Param() params) {
-    return this.studentsService.findAll(params);
+  findAll(@Query() query: any) {
+    const limit = parseInt(query.limit) || 10;
+    const page = parseInt(query.page) || 1;
+    return this.studentsService.findAll({...query, limit, page});
   }
 
   @Get(':id')
