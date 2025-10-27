@@ -39,6 +39,7 @@ export class StudentsService {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     email?: string;
+    search?: string;
     date_of_birth?: string;
     gender: 'MALE' | 'FEMALE';
   }) {
@@ -49,7 +50,8 @@ export class StudentsService {
       sortOrder = 'desc',
       email,
       date_of_birth,
-      gender
+      gender,
+      search
     } = params || {};
     const where: any = {};  
 
@@ -58,6 +60,12 @@ export class StudentsService {
     }
     if (gender) {
       where.gender = gender;
+    }
+      if (search) {
+        where.OR = [
+          {name: { contains: search}},
+          {email: { contains: search}},
+        ];
     }
 
     const skip = (page - 1) * limit;
@@ -117,7 +125,12 @@ export class StudentsService {
     });
 
     if (!student) {
-      throw new NotFoundException();
+      return {
+        data: null,
+        message: `Student with ID ${id} Not Found!`,
+        status: HttpStatus.NOT_FOUND,
+        error: true,
+      };
     }
     try {
       await this.prismaService.student.delete({ where: { id: id } });
