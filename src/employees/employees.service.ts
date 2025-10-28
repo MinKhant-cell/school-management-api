@@ -15,32 +15,34 @@ export class EmployeesService {
     limit?: number;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
-    filter?: {
-      email?: string;
-      date_of_birth?: string;
-      gender: 'MALE' | 'FEMALE';
-    };
+    email?: string;
+    search?: string;
+    date_of_birth?: string;
+    gender: 'MALE' | 'FEMALE';
   }) {
     const {
       page = 1,
       limit = 10,
       sortBy = 'id',
       sortOrder = 'desc',
-      filter,
+      email,
+      date_of_birth,
+      gender,
+      search
     } = params || {};
-    const where: any = {};
+    const where: any = {};  
 
-    const f: {
-      email?: string;
-      date_of_birth?: string;
-      gender?: 'MALE' | 'FEMALE';
-    } = filter || {};
-
-    if (f.email) {
-      where.email = { contains: f.email, mode: 'insensitive' };
+    if (email) {
+      where.email = { contains: email, mode: 'insensitive' };
     }
-    if (f.gender) {
-      where.gender = f.gender;
+    if (gender) {
+      where.gender = gender;
+    }
+      if (search) {
+        where.OR = [
+          {name: { contains: search}},
+          {email: { contains: search}},
+        ];
     }
 
     const skip = (page - 1) * limit;
@@ -80,14 +82,14 @@ export class EmployeesService {
       });
       return {
         data: employee,
-        message: `Updated Student ${employee.name} Success!`,
+        message: `Updated Teacher ${employee.name} Success!`,
         status: HttpStatus.OK,
       };
     } catch (error) {
       console.log(error);
       return {
         data: null,
-        message: `Updated Student Fail!`,
+        message: `Updated Teacher Fail!`,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         error: error,
       };
@@ -102,7 +104,7 @@ export class EmployeesService {
     if (!employee) {
       return {
         data: null,
-        message: `Student with ID ${id} Not Found!`,
+        message: `Teacher with ID ${id} Not Found!`,
         status: HttpStatus.NOT_FOUND,
         error: true,
       };
@@ -111,13 +113,13 @@ export class EmployeesService {
       await this.prismaService.employee.delete({ where: { id: id } });
       return {
         data: null,
-        message: `Deleted Student Name: ${employee.name} success!`,
+        message: `Deleted Name: ${employee.name} success!`,
         status: HttpStatus.NO_CONTENT,
       };
     } catch (error) {
       return {
         data: null,
-        message: `Deleted Student Name: ${employee.name} fail!`,
+        message: `Deleted Name: ${employee.name} fail!`,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         error: error,
       };
