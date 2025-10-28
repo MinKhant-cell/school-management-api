@@ -78,12 +78,12 @@ model Employee {
 }
 
 model Course {
-  id             Int      @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String  @unique
   start_date  DateTime?
   end_date    DateTime?
   duration    String?
-  fees        BigInt?
+  fees        Int?
   currency    String?
   description String?
   employee    Employee?    @relation(fields: [employee_id], references: [id])
@@ -91,7 +91,7 @@ model Course {
   photo_url   String?
   status      CourseStatus    @default(UPCOMING)
   is_publish  Boolean  @default(false)
-  created_by  BigInt?
+  created_by  Int?
   created_at  DateTime @default(now())
   updated_at  DateTime?
 }
