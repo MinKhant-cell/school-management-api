@@ -10,6 +10,10 @@ export class EmployeesService {
     return 'This action adds a new employee';
   }
 
+  async getAll() {
+    return await this.prismaService.employee.findMany();
+  }
+
   async findAll(params: {
     page?: number;
     limit?: number;

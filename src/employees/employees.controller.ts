@@ -14,6 +14,10 @@ export class EmployeesController {
 
   @Get()
   findAll(@Query() query: any) {
+   
+    if(!query.limit && !query.page) {
+      return this.employeesService.getAll();
+    }
     const limit = parseInt(query.limit) || 10;
     const page = parseInt(query.page) || 1;
     return this.employeesService.findAll({...query, limit, page});
