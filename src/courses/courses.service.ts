@@ -80,8 +80,19 @@ export class CoursesService {
   }
 
   async update(id: number, updateCourseDto: UpdateCourseDto) {
+    const course = await this.prismaService.course.findUnique({
+      where: { id: id },
+    });
+    if (!course) {
+      return {
+        data: null,
+        message: `Course with ID ${id} Not Found!`,
+        status: HttpStatus.NOT_FOUND,
+        error: true,
+      };
+    }
     try {
-      const course = await this.prismaService.course.update({
+      await this.prismaService.course.update({
         where: { id },
         data: updateCourseDto,
       });

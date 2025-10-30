@@ -79,8 +79,19 @@ export class EmployeesService {
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+    const employee = await this.prismaService.employee.findUnique({
+      where: { id: id },
+    });
+    if (!employee) {
+      return {
+        data: null,
+        message: `Teacher with ID ${id} Not Found!`,
+        status: HttpStatus.NOT_FOUND,
+        error: true,
+      };
+    }
     try {
-      const employee = await this.prismaService.employee.update({
+      await this.prismaService.employee.update({
         where: { id },
         data: updateEmployeeDto,
       });
