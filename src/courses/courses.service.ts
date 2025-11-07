@@ -60,6 +60,9 @@ export class CoursesService {
         skip,
         take: limit,
         orderBy,
+        include: {
+          employee: true
+        }
       }),
       this.prismaService.course.count({ where }),
     ]);
@@ -76,7 +79,9 @@ export class CoursesService {
   }
 
   async findOne(id: number) {
-    return await this.prismaService.course.findUnique({ where: { id: id } });
+    return await this.prismaService.course.findUnique({ where: { id: id },include: {
+      employee: true
+    }});
   }
 
   async update(id: number, updateCourseDto: UpdateCourseDto) {
