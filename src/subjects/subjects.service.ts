@@ -42,6 +42,10 @@ export class SubjectsService {
         }
   }
 
+  async getAll() {
+    return await this.prismaService.subject.findMany();
+  }
+
  async findAll(params: {
     page?: number;
     limit?: number;

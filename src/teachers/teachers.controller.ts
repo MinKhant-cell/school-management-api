@@ -45,7 +45,7 @@ export class TeachersController {
     const limit = parseInt(query.limit) || 10;
     const page = parseInt(query.page) || 1;
     if (!query.limit && !query.page) {
-      return;
+      return this.teachersService.getAll();
     }
     return this.teachersService.findAll({ ...query, limit, page });
   }

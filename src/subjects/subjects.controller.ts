@@ -31,7 +31,7 @@ export class SubjectsController {
     const limit = parseInt(query.limit) || 10;
     const page = parseInt(query.page) || 1;
     if(!query.limit && !query.page) {
-      return;
+      return this.subjectsService.getAll();
     }
     return this.subjectsService.findAll({ ...query, limit, page });
   }
