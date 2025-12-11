@@ -37,4 +37,4 @@ USER appuser
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
+CMD ["sh", "-c", "npx prisma migrate reset --force && npx prisma migrate dev --name=init && npm run start"]
