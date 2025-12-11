@@ -23,6 +23,9 @@ pids
 .DS_Store
 Thumbs.db
 
+prisma/dev.db
+prisma/migrations
+
 # Docker
 .dockerignore
 Dockerfile
