@@ -18,6 +18,8 @@ services:
 
   app:
     build: .
+    env_file:
+      - .env
     container_name: bk_api
     restart: unless-stopped
     depends_on:
