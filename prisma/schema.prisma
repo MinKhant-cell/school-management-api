@@ -87,7 +87,6 @@ model Classroom {
   grade       String?
   students    Student[]
   courses     Course[]
-  timetables  Timetable[]
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 }
@@ -162,9 +161,6 @@ model Timetable {
 
   teacher      Teacher     @relation(fields: [teacher_id], references: [id])
   teacher_id   Int
-
-  classroom    Classroom   @relation(fields: [classroom_id], references: [id])
-  classroom_id Int
 
   students TimetableStudent[]
 
