@@ -25,6 +25,7 @@ export class CreateCourseDto {
   @IsNotEmpty()
   @IsEnum(CourseStatus)
   status: CourseStatus;
+
 }
 
 // import { IsEmail, IsEmpty, IsEnum, IsNotEmpty } from 'class-validator';

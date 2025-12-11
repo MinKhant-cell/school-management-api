@@ -33,6 +33,10 @@ export class StudentsService {
     }
   }
 
+  async getAll() {
+    return await this.prismaService.student.findMany();
+  }
+
   async findAll(params: {
     page?: number;
     limit?: number;

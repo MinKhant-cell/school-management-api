@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -8,8 +10,12 @@ export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
+    @UseInterceptors(FileInterceptor('image'))  // <--- accept file
+
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createStudentDto: CreateStudentDto) {
+  create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
 
@@ -17,6 +23,10 @@ export class StudentsController {
   findAll(@Query() query: any) {
     const limit = parseInt(query.limit) || 10;
     const page = parseInt(query.page) || 1;
+
+    if(!query.limit && !query.page) {
+      return this.studentsService.getAll();
+    }
     return this.studentsService.findAll({...query, limit, page});
   }
 

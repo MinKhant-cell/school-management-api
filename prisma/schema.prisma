@@ -59,6 +59,11 @@ model Student {
   date_of_birth  DateTime?
   gender         Gender
   status         String    @default(" ")
+   classroom   Classroom? @relation(fields: [classroom_id], references: [id])
+  classroom_id Int?
+  courses   Course[] 
+  timetables TimetableStudent[]
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 }
@@ -74,7 +79,17 @@ model Employee {
   status         EmployeeStatus    @default(AVAILABLE)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  course Course?
+}
+
+model Classroom {
+  id          Int       @id @default(autoincrement())
+  name        String
+  grade       String?
+  students    Student[]
+  courses     Course[]
+  timetables  Timetable[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }
 
 model Course {
@@ -86,16 +101,89 @@ model Course {
   fees        Int?
   currency    String?
   description String?
-  employee    Employee?    @relation(fields: [employee_id], references: [id])
-  employee_id  Int?   @unique
   photo_url   String?
   status      CourseStatus    @default(UPCOMING)
   is_publish  Boolean  @default(false)
   created_by  Int?
-  created_at  DateTime @default(now())
-  updated_at  DateTime?
+
+    classroom   Classroom?   @relation(fields: [classroom_id], references: [id])
+  classroom_id Int?
+
+  subjects    Subject[]
+  students    Student[]
+
+
+
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
+}
+
+
+model Subject {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  image_url   String?   
+  course      Course?   @relation(fields: [course_id], references: [id])
+  course_id   Int?      // now optional
+
+  teacher     Teacher?  @relation(fields: [teacher_id], references: [id])
+  teacher_id  Int?      // now optional
+
+  timetables  Timetable[]
+
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
+}
+
+model Teacher {
+  id         Int        @id @default(autoincrement())
+  name       String
+  email      String     @unique
+  phone      String?
+  image_url  String?
+
+  subjects   Subject[]
+  timetables Timetable[]
+
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
+}
+
+
+model Timetable {
+  id           Int        @id @default(autoincrement())
+  day_of_week  String     
+  start_time   String
+  end_time     String
+
+  subject      Subject     @relation(fields: [subject_id], references: [id])
+  subject_id   Int
+
+  teacher      Teacher     @relation(fields: [teacher_id], references: [id])
+  teacher_id   Int
+
+  classroom    Classroom   @relation(fields: [classroom_id], references: [id])
+  classroom_id Int
+
+  students TimetableStudent[]
+
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
 }
 
 
 
 
+model TimetableStudent {
+  id           Int        @id @default(autoincrement())
+
+  timetable    Timetable  @relation(fields: [timetable_id], references: [id])
+  timetable_id Int
+
+  student      Student    @relation(fields: [student_id], references: [id])
+  student_id   Int
+
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
+}
