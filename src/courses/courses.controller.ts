@@ -1,22 +1,27 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UsePipes, ValidationPipe, Query, Req } from '@nestjs/common';
+
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('courses')
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Post()
+  @UseInterceptors(
+      FileInterceptor('image', {
+        limits: { fileSize: 5 * 1024 * 1024 },
+        fileFilter: (req, file, cb) => {
+          if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+            return cb(new Error('Only image files are allowed!'), false);
+          }
+          cb(null, true);
+        },
+      }),
+    )
+  @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createCourseDto: CreateCourseDto) {
     return this.coursesService.create(createCourseDto);
   }
@@ -25,6 +30,9 @@ export class CoursesController {
   findAll(@Query() query: any) {
     const limit = parseInt(query.limit) || 10;
     const page = parseInt(query.page) || 1;
+    if(!query.limit && !query.page) {
+      return this.coursesService.getAll();
+    }
     return this.coursesService.findAll({ ...query, limit, page });
   }
 
@@ -34,6 +42,18 @@ export class CoursesController {
   }
 
   @Patch(':id')
+  @UseInterceptors(
+      FileInterceptor('image', {
+        limits: { fileSize: 5 * 1024 * 1024 },
+        fileFilter: (req, file, cb) => {
+          if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+            return cb(new Error('Only image files are allowed!'), false);
+          }
+          cb(null, true);
+        },
+      }),
+    )
+  @UsePipes(new ValidationPipe({ transform: true }))
   update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
     return this.coursesService.update(+id, updateCourseDto);
   }

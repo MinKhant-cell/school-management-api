@@ -93,25 +93,23 @@ model Classroom {
 
 model Course {
   id          Int      @id @default(autoincrement())
-  name        String  @unique
-  start_date  DateTime?
-  end_date    DateTime?
+  name        String   
+  start_date  String?
+  end_date    String?
   duration    String?
   fees        Int?
   currency    String?
   description String?
-  photo_url   String?
+  image_url   String?
   status      CourseStatus    @default(UPCOMING)
   is_publish  Boolean  @default(false)
   created_by  Int?
 
-    classroom   Classroom?   @relation(fields: [classroom_id], references: [id])
+  classroom   Classroom?   @relation(fields: [classroom_id], references: [id])
   classroom_id Int?
 
   subjects    Subject[]
   students    Student[]
-
-
 
   created_at      DateTime  @default(now())
   updated_at      DateTime?  @updatedAt
