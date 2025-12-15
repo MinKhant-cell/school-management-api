@@ -9,9 +9,7 @@ export class CoursesService {
 
   async create(createCourseDto: CreateCourseDto) {
     try {
-      if(createCourseDto.name=="khant")
-      {
-          const course = await this.prismaService.course.create({
+      const course = await this.prismaService.course.create({
         data: createCourseDto,
       });
       return {
@@ -19,9 +17,6 @@ export class CoursesService {
         message: `Created Course ${course.name} Success!`,
         status: HttpStatus.CREATED,
       };
-      }
-    
-      
     } catch (error) {
       console.log(error);
       return {
@@ -31,6 +26,10 @@ export class CoursesService {
         error: error,
       };
     }
+  }
+
+   async getAll() {
+    return await this.prismaService.course.findMany();
   }
 
   async findAll(params: {
@@ -50,9 +49,7 @@ export class CoursesService {
     const where: any = {};
 
     if (search) {
-      where.OR = [
-        { name: { contains: search } },
-      ];
+      where.OR = [{ name: { contains: search } }];
     }
 
     const skip = (page - 1) * limit;
@@ -65,7 +62,13 @@ export class CoursesService {
         skip,
         take: limit,
         orderBy,
-        
+        include: {
+          subjects: {
+            include: {
+              teacher: true,
+            },
+          },
+        },
       }),
       this.prismaService.course.count({ where }),
     ]);
@@ -82,7 +85,7 @@ export class CoursesService {
   }
 
   async findOne(id: number) {
-    return await this.prismaService.course.findUnique({ where: { id: id }});
+    return await this.prismaService.course.findUnique({ where: { id: id } });
   }
 
   async update(id: number, updateCourseDto: UpdateCourseDto) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { TimetablesService } from './timetables.service';
 import { CreateTimetableDto } from './dto/create-timetable.dto';
 import { UpdateTimetableDto } from './dto/update-timetable.dto';
@@ -11,10 +11,15 @@ export class TimetablesController {
   create(@Body() createTimetableDto: CreateTimetableDto) {
     return this.timetablesService.create(createTimetableDto);
   }
-
+  
   @Get()
-  findAll() {
-    return this.timetablesService.findAll();
+  findAll(@Query() query: any) {
+    const limit = parseInt(query.limit) || 10;
+    const page = parseInt(query.page) || 1;
+    if(!query.limit && !query.page) {
+      return this.timetablesService.getAll();
+    }
+    return this.timetablesService.findAll({ ...query, limit, page });
   }
 
   @Get(':id')

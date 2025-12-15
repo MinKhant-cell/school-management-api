@@ -90,39 +90,7 @@ async function main() {
   //   });
   // }
 
-  const teachers = await prisma.employee.findMany(); // get available teachers
-  if (teachers.length === 0) {
-    console.log('No teachers found. Seed teachers first.');
-    return;
-  }
 
-  const courses = Array.from({ length: 50 }).map((_, i) => {
-    const startDate = new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
-    const endDate = new Date(startDate);
-    endDate.setMonth(startDate.getMonth() + Math.floor(Math.random() * 12) + 1); // add 1–12 months randomly
-
-    const teacher = teachers[i % teachers.length];
-
-    return {
-      name: `Course ${i + 1}`,
-      start_date: startDate,
-      end_date: endDate,
-      duration: calculateDuration(startDate, endDate),
-      fees: Math.floor(Math.random() * 50000) + 1000,
-      currency: 'USD',
-      description: `Description for Course ${i + 1}`,
-      photo_url: `https://picsum.photos/200/300?random=${i + 1}`,
-      status: CourseStatus.UPCOMING,
-      is_publish: true, 
-      created_at: new Date(),
-      updated_at: new Date(),
-    };
-  });
-
-console.log(courses)
-await prisma.course.createMany({
-  data: courses,
-});
 
   // for (const course of courses) {
   //   await prisma.course.upsert({

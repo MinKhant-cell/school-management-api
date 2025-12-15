@@ -1,28 +1,28 @@
-import { IsEmail, IsEmpty, IsEnum, IsNotEmpty, isEmpty } from 'class-validator';
+import { IsEmpty, IsEnum, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { CourseStatus } from '@prisma/client';
 import { Type } from 'class-transformer';
 export class CreateCourseDto {
   @IsNotEmpty()
   name: string;
 
-  @IsEmpty()
-  @Type(() => Date)
-  start_date: Date;
-
-  @IsEmpty()
-  @Type(() => Date)
-  end_date: Date;
-
-//   @IsEmpty()
-//   fees: number;
-
-  @IsEmpty()
-  currency: string;
-
-  @IsEmpty()
-  description: string;
+  @IsNotEmpty()
+  start_date: string;
 
   @IsNotEmpty()
+  end_date: string;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  fees: number;
+
+  @IsNotEmpty()
+  currency: string;
+
+  @IsOptional()
+  description: string;
+
+  @IsOptional()
   @IsEnum(CourseStatus)
   status: CourseStatus;
 
