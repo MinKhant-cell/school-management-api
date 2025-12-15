@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -6,8 +6,25 @@ import { PrismaService } from 'src/prisma.service';
 @Injectable()
 export class ClassroomsService {
   constructor(private prismaService: PrismaService) {}
-  create(createClassroomDto: CreateClassroomDto) {
-    return 'This action adds a new classroom';
+  async create(createClassroomDto: CreateClassroomDto) {
+    try {
+          const classroom = await this.prismaService.classroom.create({
+            data: createClassroomDto,
+          });
+          return {
+            data: classroom,
+            message: `Created Classroom ${classroom.name} Success!`,
+            status: HttpStatus.CREATED,
+          };
+        } catch (error) {
+          console.log(error);
+          return {
+            data: null,
+            message: `Created Classroom Fail!`,
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error: error,
+          };
+        }
   }
 
   async getAll() {
@@ -59,15 +76,74 @@ export class ClassroomsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} classroom`;
+  async findOne(id: number) {
+    const classroom = await this.prismaService.classroom.findUnique({ where: { id: id } });
+    if (!classroom) {
+      return {
+        data: null,
+        message: `Classroom with ID ${id} Not Found!`,
+        status: HttpStatus.NOT_FOUND,
+        error: true,
+      };
+    }
+    return classroom;
   }
 
-  update(id: number, updateClassroomDto: UpdateClassroomDto) {
-    return `This action updates a #${id} classroom`;
+  async update(id: number, updateClassroomDto: UpdateClassroomDto) {
+    const classroom = await this.prismaService.classroom.findUnique({ where: { id: id } });
+    if (!classroom) {
+      return {
+        data: null,
+        message: `Classroom with ID ${id} Not Found!`,
+        status: HttpStatus.NOT_FOUND,
+        error: true,
+      };
+    }
+    try{
+      await this.prismaService.classroom.update({
+        where: { id },
+        data: updateClassroomDto,
+      });
+      return {
+        data: classroom,
+        message: `Updated Classroom ${classroom.name} Success!`,
+        status: HttpStatus.OK,
+      };
+    }catch(error){
+      console.log(error);
+      return {
+        data: null,
+        message: `Updated Classroom Fail!`,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: error,
+      };
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} classroom`;
+  async remove(id: number) {
+    const classroom = await this.prismaService.classroom.findUnique({ where: { id: id } });
+    if (!classroom) {
+      return {
+        data: null,
+        message: `Classroom with ID ${id} Not Found!`,
+        status: HttpStatus.NOT_FOUND,
+        error: true,
+      };
+    }
+    try {
+          await this.prismaService.classroom.delete({ where: { id: id } });
+          return {
+            data: null,
+            message: `Deleted Classroom Name: ${classroom.name} success!`,
+            status: HttpStatus.NO_CONTENT,
+          };
+        } catch (error) {
+          return {
+            data: null,
+            message: `Deleted Classroom Name: ${classroom.name} fail!`,
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error: error,
+          };
+        }
   }
 }
