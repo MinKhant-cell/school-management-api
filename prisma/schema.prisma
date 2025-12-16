@@ -46,11 +46,10 @@ model User {
   name           String?
   role           String    @default("user")
   isActive       Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
   refreshToken   String?
 }
-
 
 model Student {
   id             Int       @id @default(autoincrement())
@@ -63,9 +62,8 @@ model Student {
   classroom_id Int?
   courses   Course[] 
   timetables TimetableStudent[]
-
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
 }
 
 model Employee {
@@ -166,18 +164,12 @@ model Timetable {
   updated_at      DateTime?  @updatedAt
 }
 
-
-
-
 model TimetableStudent {
   id           Int        @id @default(autoincrement())
-
   timetable    Timetable  @relation(fields: [timetable_id], references: [id])
   timetable_id Int
-
   student      Student    @relation(fields: [student_id], references: [id])
   student_id   Int
-
-  created_at      DateTime  @default(now())
-  updated_at      DateTime?  @updatedAt
+  created_at   DateTime  @default(now())
+  updated_at   DateTime?  @updatedAt
 }
