@@ -12,12 +12,27 @@ import { SubjectsModule } from './subjects/subjects.module';
 import { TimetablesModule } from './timetables/timetables.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule, UsersModule, StudentsModule, EmployeesModule, CoursesModule, ClassroomsModule, TeachersModule, SubjectsModule, TimetablesModule,ServeStaticModule.forRoot({
+  imports: [
+    AuthModule,
+    UsersModule,
+    StudentsModule,
+    EmployeesModule,
+    CoursesModule,
+    ClassroomsModule,
+    TeachersModule,
+    SubjectsModule,
+    TimetablesModule,
+    ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
-    }),],
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
