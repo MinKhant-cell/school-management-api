@@ -24,7 +24,7 @@ pids
 Thumbs.db
 
 prisma/dev.db
-prisma/migrations
+# prisma/migrations
 
 # Docker
 .dockerignore
