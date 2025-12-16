@@ -21,8 +21,9 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
@@ -48,7 +49,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/multer": "^2.0.0",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.19.3",
     "@types/passport-local": "^1.0.38",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
@@ -64,7 +65,8 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
@@ -84,5 +86,4 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
-  
 }
