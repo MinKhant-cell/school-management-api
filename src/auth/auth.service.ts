@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsersService } from 'src/users/users.service';
@@ -7,53 +11,58 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
-  async signIn( email, password): Promise<any> {
-    const user = await this.usersService.findOne(email);
-    if(!user) {
-      throw new UnauthorizedException();
-    }
-    
-    const passwordValid = await bcrypt.compare(password, user.password);
-    if (!passwordValid) {
-      throw new UnauthorizedException();
-    }
-    
+  async login(user: any): Promise<any> {
     const payload = { sub: user.id, username: user.name };
-     const accessToken = await this.jwtService.signAsync(payload, {
-    expiresIn: '15m',
-  });
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '15m',
+    });
     const refreshToken = await this.jwtService.signAsync(payload, {
-    expiresIn: '7d',
-  });
+      expiresIn: '7d',
+    });
 
-  const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-  await this.usersService.updateRefreshToken(user.id, hashedRefreshToken);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.usersService.updateRefreshToken(user.id, hashedRefreshToken);
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
     };
   }
 
+  async validateUser(email: string, pass: string) {
+    const user = await this.usersService.findOne(email);
+    const passwordValid = await bcrypt.compare(pass, user?.password);
+    if (user && passwordValid) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
   async refreshTokens(userId: number, refreshToken: string) {
-  const user = await this.usersService.findById(userId);
+    const user = await this.usersService.findById(userId);
 
-  if (!user || !user.refreshToken) {
-    throw new ForbiddenException();
+    if (!user || !user.refreshToken) {
+      throw new ForbiddenException();
+    }
+    console.log(user);
+    const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+    if (!isValid) {
+      throw new ForbiddenException();
+    }
+
+    const payload = { sub: user.id, username: user.name };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '15m',
+      }),
+    };
   }
-  console.log(user);
-  const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
-  if (!isValid) {
-    throw new ForbiddenException();
-  }
-
-  const payload = { sub: user.id, username: user.name };
-
-  return {
-    access_token: await this.jwtService.signAsync(payload, { expiresIn: '15m' }),
-  };
-}
 
   verifyPassword(password: string, hashedPassword: string) {
     return bcrypt.compare(password, hashedPassword);
@@ -67,8 +76,13 @@ export class AuthService {
     return `This action returns all auth`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`; 
+  async findOne(id: number) {
+    const user = await this.usersService.findById(id);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    const { password, ...result } = user;
+    return result;
   }
 
   update(id: number, updateAuthDto: UpdateAuthDto) {
