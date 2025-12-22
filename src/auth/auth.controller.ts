@@ -1,28 +1,35 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { AuthGuard } from './auth.guard';
+import { LocalAuthGuard } from './local-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
+// import { AuthGuard } from './auth.guard';
+import { Public } from '../common/decorators/public.decorator';
+
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-   signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+   login(@Request() req) {
+    return this.authService.login(req.user);
   }
 
   @Post('refresh_token')
-  refreshTokens( @Body() data: any) {
-    return this.authService.refreshTokens(+data.id, data.refreshToken);
+  refreshTokens(@Request() req, @Body() data: any) {
+    return this.authService.refreshTokens(+req.user.id, data.refreshToken);
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    return this.authService.findOne(+req.user.id);
   }
+
 
   @Get()
   findAll() {
