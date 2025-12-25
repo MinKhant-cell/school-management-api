@@ -39,6 +39,11 @@ enum CourseStatus {
   CANCELLED
 }
 
+enum ClassroomStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
 model User {
   id             Int       @id @default(autoincrement())
   email          String    @unique
@@ -83,6 +88,9 @@ model Classroom {
   id          Int       @id @default(autoincrement())
   name        String
   grade       String?
+  description   String?
+  status      ClassroomStatus    @default(AVAILABLE)
+  image_url   String?
   students    Student[]
   courses     Course[]
   created_at  DateTime @default(now())

@@ -43,13 +43,13 @@ export class AuthService {
     return null;
   }
 
-  async refreshTokens(userId: number, refreshToken: string) {
-    const user = await this.usersService.findById(userId);
+  async refreshTokens(user_id: any, refreshToken: string) {
+    
+    const user = await this.usersService.findById(user_id);
 
     if (!user || !user.refreshToken) {
       throw new ForbiddenException();
     }
-    console.log(user);
     const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
     if (!isValid) {
       throw new ForbiddenException();
@@ -62,7 +62,7 @@ export class AuthService {
         expiresIn: '15m',
       }),
     };
-  }
+  } 
 
   verifyPassword(password: string, hashedPassword: string) {
     return bcrypt.compare(password, hashedPassword);

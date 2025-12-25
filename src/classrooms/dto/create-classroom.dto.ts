@@ -1,4 +1,5 @@
-import { IsOptional, IsString } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
+import { ClassroomStatus } from '@prisma/client';
 
 export class CreateClassroomDto {
     @IsString()
@@ -7,4 +8,12 @@ export class CreateClassroomDto {
     @IsOptional()
     @IsString()
     grade: string;
+
+    @IsOptional()
+    @IsString()
+    description: string;
+
+    @IsOptional()
+    @IsEnum(ClassroomStatus)
+    status: ClassroomStatus;
 }

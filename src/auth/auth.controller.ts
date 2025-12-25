@@ -19,10 +19,10 @@ export class AuthController {
    login(@Request() req) {
     return this.authService.login(req.user);
   }
-
+  @Public()
   @Post('refresh_token')
-  refreshTokens(@Request() req, @Body() data: any) {
-    return this.authService.refreshTokens(+req.user.id, data.refreshToken);
+  refreshTokens(@Body() data: { user_id: number; refresh_token: string }) {
+    return this.authService.refreshTokens(data.user_id, data.refresh_token);
   }
 
   @Get('profile')
