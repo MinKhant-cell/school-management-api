@@ -53,7 +53,7 @@ model User {
   isActive       Boolean   @default(true)
   created_at      DateTime  @default(now())
   updated_at      DateTime?  @updatedAt
-  refreshToken   String?
+  refresh_token   String?
 }
 
 model Student {

@@ -8,6 +8,7 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,14 +44,13 @@ export class AuthService {
     return null;
   }
 
-  async refreshTokens(user_id: any, refreshToken: string) {
-    
+  async refreshTokens(data: RefreshTokenDto) {
+    const { user_id, refresh_token } = data;
     const user = await this.usersService.findById(user_id);
-
-    if (!user || !user.refreshToken) {
+    if (!user || !user.refresh_token) {
       throw new ForbiddenException();
     }
-    const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+    const isValid = await bcrypt.compare(refresh_token, user.refresh_token);
     if (!isValid) {
       throw new ForbiddenException();
     }
