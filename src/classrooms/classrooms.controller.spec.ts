@@ -14,7 +14,7 @@ describe('ClassroomsController', () => {
     controller = module.get<ClassroomsController>(ClassroomsController);
   });
 
-  it('should be defined', () => {
+  it('should be defined', () => { 
     expect(controller).toBeDefined();
   });
 });

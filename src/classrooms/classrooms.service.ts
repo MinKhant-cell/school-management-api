@@ -17,7 +17,7 @@ export class ClassroomsService {
             status: HttpStatus.CREATED,
           };
         } catch (error) {
-          console.log(error);
+          console.log(error); 
           return {
             data: null,
             message: `Created Classroom Fail!`,
@@ -100,13 +100,13 @@ export class ClassroomsService {
       };
     }
     try{
-      await this.prismaService.classroom.update({
+    const updateClassromm = await this.prismaService.classroom.update({
         where: { id },
         data: updateClassroomDto,
       });
       return {
-        data: classroom,
-        message: `Updated Classroom ${classroom.name} Success!`,
+        data: updateClassromm,
+        message: `Updated Classroom ${updateClassromm.name} Success!`,
         status: HttpStatus.OK,
       };
     }catch(error){

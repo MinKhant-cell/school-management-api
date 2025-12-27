@@ -7,6 +7,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 // import { AuthGuard } from './auth.guard';
 import { Public } from '../common/decorators/public.decorator';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 
 @Controller('auth')
@@ -19,10 +20,10 @@ export class AuthController {
    login(@Request() req) {
     return this.authService.login(req.user);
   }
-
+  @Public()
   @Post('refresh_token')
-  refreshTokens(@Request() req, @Body() data: any) {
-    return this.authService.refreshTokens(+req.user.id, data.refreshToken);
+  refreshTokens(@Body() data: RefreshTokenDto) {
+    return this.authService.refreshTokens(data);
   }
 
   @Get('profile')
